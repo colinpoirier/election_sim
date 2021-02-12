@@ -14,8 +14,8 @@ class LoadJsonCubit extends Cubit<LoadJsonState> {
   void loadJson() async {
     try {
       final rawStates = await rootBundle.loadString('json_data/states-1.json');
-      // final rawCandidates = await rootBundle.loadString('json_data/candidates-1.json');
-      final rawCandidates = await rootBundle.loadString('json_data/candidates-valid.json');
+      final rawCandidates = await rootBundle.loadString('json_data/candidates-1.json');
+      // final rawCandidates = await rootBundle.loadString('json_data/candidates-valid.json');
       final states = States.fromJson(rawStates);
       final candidates = Candidates.fromJson(rawCandidates);
       String error;
