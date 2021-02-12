@@ -18,21 +18,13 @@ class LoadJsonCubit extends Cubit<LoadJsonState> {
       // final rawCandidates = await rootBundle.loadString('json_data/candidates-valid.json');
       final states = States.fromJson(rawStates);
       final candidates = Candidates.fromJson(rawCandidates);
-      String error;
-      if (!candidates.haveSameStates) {
-        error = 'Candidates don\'t have same states';
-      }
-      if (!candidates.haveValidChances) {
-        final addError = 'don\'t have valid chances';
-        error = error == null ? 'Candidates $addError' : '$error and $addError';
-      }
-      if (error == null) {
+      if (candidates.isValid) {
         emit(JsonLoaded(
           states: states,
           candidates: candidates,
         ));
       } else {
-        emit(LoadJsonError(error: '$error.'));
+        emit(LoadJsonError(error: 'Candidate data not valid.'));
       }
     } catch (_) {
       emit(LoadJsonError(error: 'Something went wrong :('));

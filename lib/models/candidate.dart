@@ -10,7 +10,7 @@ class Candidates {
 
   final List<Candidate> candidates;
 
-  bool get haveSameStates {
+  bool get isValid {
     // check if all candidates have same states
     final listsOfStateIds = candidates.map((e) => e.stateChancesOfWinning.map((e) => e.stateId).toList()).toList();
     if (listsOfStateIds.isEmpty) return false;
@@ -20,10 +20,7 @@ class Candidates {
         return false;
       }
     }
-    return true;
-  }
 
-  bool get haveValidChances {
     // check to make sure sum of chances == 100
     final listsOfChances = candidates.map((e) => e.stateChancesOfWinning.map((e) => e.chance).toList()).toList();
     for (int j = 0; j < listsOfChances.first.length; j++) {
