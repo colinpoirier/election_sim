@@ -14,17 +14,17 @@ class LoadJsonCubit extends Cubit<LoadJsonState> {
   void loadJson() async {
     try {
       final rawStates = await rootBundle.loadString('json_data/states-1.json');
-      final rawCandidates = await rootBundle.loadString('json_data/candidates-1.json');
-      // final rawCandidates = await rootBundle.loadString('json_data/candidates-valid.json');
+      // final rawCandidates = await rootBundle.loadString('json_data/candidates-1.json');
+      final rawCandidates = await rootBundle.loadString('json_data/candidates-valid.json');
       final states = States.fromJson(rawStates);
       final candidates = Candidates.fromJson(rawCandidates);
-      if (candidates.isValid) {
+      if (candidates.isValid && states.isValid) {
         emit(JsonLoaded(
           states: states,
           candidates: candidates,
         ));
       } else {
-        emit(LoadJsonError(error: 'Candidate data not valid.'));
+        emit(LoadJsonError(error: 'Election data not valid.'));
       }
     } catch (_) {
       emit(LoadJsonError(error: 'Something went wrong :('));

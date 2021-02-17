@@ -10,6 +10,11 @@ class States {
 
   final List<StateData> states;
 
+  bool get isValid {
+    final statesVotes = states.map((e) => e.votes).toList();
+    return statesVotes.every((votes) => votes >= 0);
+  }
+
 
   List<Map<String, dynamic>> toMap() {
     return states?.map((x) => x?.toMap())?.toList();
