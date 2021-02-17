@@ -112,7 +112,7 @@ List<String> doThing(List<String> args) {
       // handle tie
       final lastWinner = electionWinners.removeLast();
       final listWinners = electionWinners.map((e) => e.key.name).toList().toString().replaceAll(RegExp(r'[\[|\]]'), '');
-      results.add('It was a tie between $listWinners and ${lastWinner.key.name}.');
+      results.add('It was a tie between $listWinners${listWinners.length > 1 ? ',' : ''} and ${lastWinner.key.name}.');
     }
     results.add(''); // hacky but functional
   }
