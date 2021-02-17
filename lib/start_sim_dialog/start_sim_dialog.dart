@@ -13,28 +13,23 @@ class StartSimDialog extends StatelessWidget {
       create: (_) => StartSimBloc(),
       child: AlertDialog(
         title: const Text('Enter Runs'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BlocBuilder<StartSimBloc, StartSimState>(
-              builder: (context, state) {
-                return TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    errorText: state.error,
-                  ),
-                  initialValue: '${state.runs}',
-                  onChanged: (val) {
-                    context.read<StartSimBloc>().add(StartSimEvent(runs: val));
-                  },
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  keyboardType: TextInputType.number,
-                );
+        content: BlocBuilder<StartSimBloc, StartSimState>(
+          builder: (context, state) {
+            return TextFormField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                errorText: state.error,
+              ),
+              initialValue: '${state.runs}',
+              onChanged: (val) {
+                context.read<StartSimBloc>().add(StartSimEvent(runs: val));
               },
-            )
-          ],
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              keyboardType: TextInputType.number,
+            );
+          },
         ),
         actions: [
           FlatButton(
