@@ -26,7 +26,9 @@ class Candidates {
     for (int j = 0; j < listsOfChances.first.length; j++) {
       int sumChance = 0;
       for (int i = 0; i < listsOfChances.length; i++) {
-        sumChance += listsOfChances[i][j];
+        final candidateChance = listsOfChances[i][j];
+        if (candidateChance < 0) return false;
+        sumChance += candidateChance;
       }
       if (sumChance != 100) return false;
     }
