@@ -77,7 +77,7 @@ List<String> doThing(List<String> args) {
       final id = state.id;
       int j = 0;
       Candidate stateWinner;
-      final win = r.nextInt(101); // [0, 100]. 101 not included
+      final win = r.nextInt(100) + 1; // [1, 100]
       for (final candidate in candidates.candidates) {
         final chance = candidate.stateChancesOfWinning.firstWhere((e) => e.stateId == id, orElse: () => null)?.chance;
         if (chance == null) {
