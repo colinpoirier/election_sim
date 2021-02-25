@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:election_sim/cubit/load_json_cubit.dart';
 import 'package:election_sim/models/candidate.dart';
+import 'package:election_sim/models/sim_results/run_results.dart';
 import 'package:election_sim/models/states.dart';
 import 'package:flutter/foundation.dart';
 
@@ -53,36 +54,34 @@ class SimBloc extends Bloc<SimEvent, SimState> {
       final runs = '${event.runs}';
       // use compute to avoid hogging main thread
       final data = await compute(doThing, <String>[runs, candidates, states]);
-      yield SimResults(results: data);
+      yield SimResults(results: data.map((e) => RunResults.fromJson(e).formatted).toList());
     } catch (_) {
       yield SimError();
     }
   }
 }
 
-
 List<String> doThing(List<String> args) {
   final runs = int.parse(args[0]);
   final candidates = Candidates.fromJson(args[1]);
   final states = States.fromJson(args[2]);
-  
+
   final Random r = Random();
 
-  List<String> results = [];
+  final runResults = <RunResults>[];
 
-  Map<Candidate, int> totalVotes;
-  for(int i = 0; i < runs; i++) {
-    totalVotes = {};
-    results.add('Run ${i + 1}:');
+  for (int i = 1; i <= runs; i++) {
+    final totalVotes = <Candidate, int>{};
+    final electionResults = <ElectionResults>[];
     for (final state in states.states) {
       final id = state.id;
       int j = 0;
       Candidate stateWinner;
       final win = r.nextInt(101); // [0, 100]. 101 not included
-      for (final candidate in candidates.candidates){
+      for (final candidate in candidates.candidates) {
         final chance = candidate.stateChancesOfWinning.firstWhere((e) => e.stateId == id, orElse: () => null)?.chance;
         if (chance == null) {
-           // candidates are not running in this state
+          // candidates are not running in this state
           break;
         }
         // determine if candidate is winner
@@ -97,25 +96,20 @@ List<String> doThing(List<String> args) {
         // no winner. go to next state
         continue;
       }
-      final winChance = stateWinner.stateChancesOfWinning.firstWhere((e) => e.stateId == id).chance;
-      results.add('${stateWinner.name} won ${state.name} getting ${state.votes} votes with a $winChance% win chance${winChance <= 30 ? ' (an upset)' : ''}.');
+      electionResults.add(ElectionResults(state: state, winner: stateWinner));
       totalVotes.update(stateWinner, (value) => value + state.votes, ifAbsent: () => state.votes);
     }
     // get candidates with highest total votes
     final sortedVotes = totalVotes.values.toList()..sort();
     final electionWinners = totalVotes.entries.where((element) => element.value == sortedVotes.last).toList();
-    if (electionWinners.length == 1){
-      // handle one winner
-      final electionWinner = electionWinners.first.key;
-      results.add('Overall winner is ${electionWinner.name} with ${sortedVotes.last} votes.');
-    } else {
-      // handle tie
-      final lastWinner = electionWinners.removeLast();
-      final listWinners = electionWinners.map((e) => e.key.name).toList().toString().replaceAll(RegExp(r'[\[|\]]'), '');
-      results.add('It was a tie between $listWinners${listWinners.length > 1 ? ',' : ''} and ${lastWinner.key.name}.');
-    }
-    results.add(''); // hacky but functional
+    runResults.add(RunResults(
+      run: i,
+      electionResults: electionResults,
+      overallResult: OverallResult.fromWinners(
+        winners: electionWinners.map((e) => e.key).toList(),
+        votes: sortedVotes.last,
+      ),
+    ));
   }
-
-  return results;
+  return runResults.map((e) => e.toJson()).toList();
 }
