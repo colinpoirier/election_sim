@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:election_sim/models/sim_results/run_results.dart';
 
+
+// not used but, like Candidates, can be used for general analysis
 class SimResults {
   SimResults({this.results});
 

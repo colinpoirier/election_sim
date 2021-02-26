@@ -16,6 +16,10 @@ class RunResults {
   final List<ElectionResults> electionResults;
   final OverallResult overallResult;
   final int run;
+
+  // these two could just be an instance method but depending on how the object is used
+  // it may be more efficient to store the formatted string here instead of assembling it
+  // every build method.
   final String formatted;
   
   static String getFormatted(List<ElectionResults> electionResults, OverallResult overallResult, int run) {

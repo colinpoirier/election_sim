@@ -54,6 +54,7 @@ class SimBloc extends Bloc<SimEvent, SimState> {
       final runs = '${event.runs}';
       // use compute to avoid hogging main thread
       final data = await compute(doThing, <String>[runs, candidates, states]);
+      // see RunResults for comment
       yield SimResults(results: data.map((e) => RunResults.fromJson(e).formatted).toList());
     } catch (_) {
       yield SimError();
